@@ -4,15 +4,18 @@ import { FeatureSection } from "@/components/features/FeatureSection";
 import { InformationGrid } from "@/components/information/InformationGrid";
 import { DiscordCallToAction } from "@/components/community/DiscordCallToAction";
 import { Footer } from "@/components/footer/Footer";
+import { ServerStatusProvider } from "@/components/status/ServerStatusProvider";
 
 export default function Home() {
   return (
     <>
       <Header />
       <main id="main-content">
-        <Hero />
-        <FeatureSection />
-        <InformationGrid />
+        <ServerStatusProvider>
+          <Hero />
+          <FeatureSection />
+          <InformationGrid />
+        </ServerStatusProvider>
         <DiscordCallToAction />
       </main>
       <Footer />

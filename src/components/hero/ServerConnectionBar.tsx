@@ -1,52 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Copy, Check } from "lucide-react";
-import { fetchServerStatus, toLegacyStatus } from "@/services/minecraftStatus";
-import type { ServerStatus } from "@/types/server";
+import { useServerStatus } from "@/components/status/ServerStatusProvider";
 import { siteConfig } from "@/config/site";
 
 export function ServerConnectionBar() {
-  const [status, setStatus] = useState<ServerStatus | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { status, state } = useServerStatus();
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchData = () => {
-      fetchServerStatus()
-        .then((response) => {
-          if (!cancelled) {
-            setStatus(toLegacyStatus(response));
-            setLoading(false);
-          }
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setStatus({
-              online: false,
-              playersOnline: 0,
-              playersMax: 0,
-              version: "—",
-              address: siteConfig.serverDisplayAddress,
-            });
-            setLoading(false);
-          }
-        });
-    };
-
-    fetchData();
-    const interval = setInterval(fetchData, 30_000);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, []);
-
-  const handleCopyIp = async () => {
+  const handleCopyIp = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(siteConfig.serverDisplayAddress);
       setCopied(true);
@@ -55,7 +19,9 @@ export function ServerConnectionBar() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     }
-  };
+  }, []);
+
+  const isLoading = state === "initial" || state === "loading";
 
   return (
     <motion.div
@@ -67,7 +33,7 @@ export function ServerConnectionBar() {
       <div className="flex items-center gap-2">
         <span
           className={`w-2.5 h-2.5 rounded-full ${
-            loading
+            isLoading
               ? "bg-[#e8b342] animate-pulse"
               : status?.online
                 ? "bg-[#54d255] shadow-[0_0_6px_#54d255]"
@@ -76,11 +42,13 @@ export function ServerConnectionBar() {
           aria-hidden="true"
         />
         <span className="text-[#b6b9bb]">
-          {loading
+          {isLoading
             ? "Consultando servidor..."
-            : status?.online
-              ? `${status.playersOnline} jugadores conectados`
-              : "Servidor desconectado"}
+            : state === "provider-unavailable"
+              ? "No se pudo consultar"
+              : status?.online
+                ? `${status.playersOnline} jugadores conectados`
+                : "Servidor desconectado"}
         </span>
       </div>
 
