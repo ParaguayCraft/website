@@ -1,7 +1,34 @@
+import type { StatusApiResponse } from "@/types/status-api";
 import type { ServerStatus } from "@/types/server";
+import { siteConfig } from "@/config/site";
 
-export async function fetchServerStatus(): Promise<ServerStatus> {
+export type { StatusApiResponse };
+
+export async function fetchServerStatus(): Promise<StatusApiResponse> {
   const res = await fetch("/api/status");
-  if (!res.ok) throw new Error("Status fetch failed");
+  if (!res.ok && res.status >= 500) {
+    const body = await res.json().catch(() => null);
+    return body ?? { ok: false, error: "provider_unavailable" };
+  }
   return res.json();
+}
+
+/** Convert API response to the legacy ServerStatus shape used by UI components. */
+export function toLegacyStatus(response: StatusApiResponse): ServerStatus {
+  if (response.ok) {
+    return {
+      online: response.server.online,
+      playersOnline: response.server.playersOnline,
+      playersMax: response.server.playersMax ?? 0,
+      version: response.server.version,
+      address: response.server.address,
+    };
+  }
+  return {
+    online: false,
+    playersOnline: 0,
+    playersMax: 0,
+    version: "—",
+    address: siteConfig.serverDisplayAddress,
+  };
 }

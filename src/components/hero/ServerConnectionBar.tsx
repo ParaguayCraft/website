@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Copy, Check } from "lucide-react";
-import { fetchServerStatus } from "@/services/minecraftStatus";
+import { fetchServerStatus, toLegacyStatus } from "@/services/minecraftStatus";
 import type { ServerStatus } from "@/types/server";
 import { siteConfig } from "@/config/site";
 
@@ -15,11 +15,11 @@ export function ServerConnectionBar() {
   useEffect(() => {
     let cancelled = false;
 
-    const fetchStatus = () => {
+    const fetchData = () => {
       fetchServerStatus()
-        .then((data) => {
+        .then((response) => {
           if (!cancelled) {
-            setStatus(data);
+            setStatus(toLegacyStatus(response));
             setLoading(false);
           }
         })
@@ -30,15 +30,15 @@ export function ServerConnectionBar() {
               playersOnline: 0,
               playersMax: 0,
               version: "—",
-              address: siteConfig.serverIp,
+              address: siteConfig.serverDisplayAddress,
             });
             setLoading(false);
           }
         });
     };
 
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 30_000);
+    fetchData();
+    const interval = setInterval(fetchData, 30_000);
 
     return () => {
       cancelled = true;
@@ -48,7 +48,7 @@ export function ServerConnectionBar() {
 
   const handleCopyIp = async () => {
     try {
-      await navigator.clipboard.writeText(siteConfig.serverIp);
+      await navigator.clipboard.writeText(siteConfig.serverDisplayAddress);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
@@ -64,7 +64,6 @@ export function ServerConnectionBar() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4, duration: 0.6 }}
     >
-      {/* Status indicator */}
       <div className="flex items-center gap-2">
         <span
           className={`w-2.5 h-2.5 rounded-full ${
@@ -85,13 +84,12 @@ export function ServerConnectionBar() {
         </span>
       </div>
 
-      {/* IP */}
       <button
         onClick={handleCopyIp}
         className="flex items-center gap-1.5 text-[#f5f5f2] hover:text-[#3c7bd9] transition-colors cursor-pointer font-mono text-sm"
-        aria-label="Copiar IP del servidor"
+        aria-label={`Copiar IP del servidor: ${siteConfig.serverDisplayAddress}`}
       >
-        <span>IP: {siteConfig.serverIp}</span>
+        <span>IP: {siteConfig.serverDisplayAddress}</span>
         {copied ? (
           <Check size={16} className="text-[#54d255]" />
         ) : (
@@ -99,7 +97,6 @@ export function ServerConnectionBar() {
         )}
       </button>
 
-      {/* Version */}
       <span className="text-[#8a8f92] text-sm">
         Versión: {status?.version ?? "—"}
       </span>

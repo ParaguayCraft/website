@@ -10,7 +10,7 @@ export function CopyServerIpButton() {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(siteConfig.serverIp);
+      await navigator.clipboard.writeText(siteConfig.serverDisplayAddress);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
