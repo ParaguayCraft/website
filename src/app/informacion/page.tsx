@@ -32,7 +32,7 @@ export default function InformacionPage() {
               crece día a día. Ya seas constructor, comerciante, guerrero o explorador, hay un
               lugar para vos en ParaguayCraft.
             </p>
-            <div className="aspect-video bg-[#101417] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#777e82] text-xs">
+            <div className="aspect-video bg-[#101417] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#8a8f92] text-xs">
               Captura del servidor
             </div>
           </PanelWrapper>
@@ -40,15 +40,15 @@ export default function InformacionPage() {
           <PanelWrapper title="CÓMO CONECTARSE">
             <div className="space-y-4 text-sm">
               <div>
-                <span className="text-[#777e82]">IP del servidor</span>
+                <span className="text-[#8a8f92]">IP del servidor</span>
                 <p className="text-[#f5f5f2] font-mono mt-0.5">play.paraguaycraft.com</p>
               </div>
               <div>
-                <span className="text-[#777e82]">Versión</span>
+                <span className="text-[#8a8f92]">Versión</span>
                 <p className="text-[#f5f5f2] mt-0.5">Minecraft Java 1.21+</p>
               </div>
               <div>
-                <span className="text-[#777e82]">Plataformas</span>
+                <span className="text-[#8a8f92]">Plataformas</span>
                 <p className="text-[#f5f5f2] mt-0.5">Java Edition (premium y no premium)</p>
               </div>
               <p className="text-[#b6b9bb] leading-relaxed pt-2">

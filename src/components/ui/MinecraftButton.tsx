@@ -24,11 +24,11 @@ export function MinecraftButton({
 
   const variants: Record<string, string> = {
     primary:
-      "bg-[#d62f2f] border-[#991f24] text-[#f1f1ed] hover:bg-[#e04040] hover:border-[#d62f2f] shadow-[inset_0_-3px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-[2px]",
+      "bg-[#d62f2f] border-[#991f24] text-[#f1f1ed] hover:bg-[#e04040] hover:border-[#d62f2f] shadow-[inset_0_-3px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-[2px] active:scale-[0.98]",
     secondary:
-      "bg-[#12171a] border-[#2455a4] text-[#f5f5f2] hover:bg-[#181e22] hover:border-[#3c7bd9] shadow-[inset_0_-3px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-[2px]",
+      "bg-[#12171a] border-[#2455a4] text-[#f5f5f2] hover:bg-[#181e22] hover:border-[#3c7bd9] shadow-[inset_0_-3px_0_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-[2px] active:scale-[0.98]",
     outline:
-      "bg-transparent border-[rgba(255,255,255,0.15)] text-[#f5f5f2] hover:bg-[rgba(255,255,255,0.05)] hover:border-[#3c7bd9]",
+      "bg-transparent border-[rgba(255,255,255,0.15)] text-[#f5f5f2] hover:bg-[rgba(255,255,255,0.05)] hover:border-[#3c7bd9] active:scale-[0.98]",
   };
 
   const Tag = href ? "a" : "button";

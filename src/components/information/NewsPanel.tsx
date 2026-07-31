@@ -22,7 +22,7 @@ export function NewsPanel() {
           </div>
         </>
       ) : (
-        <p className="text-sm text-[#777e82] text-center py-8">
+        <p className="text-sm text-[#8a8f92] text-center py-8">
           Todavía no hay noticias publicadas.
         </p>
       )}

@@ -11,7 +11,7 @@ export function AboutPanel() {
         Nuestro objetivo es construir un mundo vivo donde cada jugador pueda sobrevivir,
         comerciar, competir, formar alianzas y participar en eventos junto a la comunidad.
       </p>
-      <div className="aspect-video bg-[#101417] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#777e82] text-xs">
+      <div className="aspect-video bg-[#101417] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#8a8f92] text-xs">
         Captura del servidor
       </div>
     </PanelWrapper>

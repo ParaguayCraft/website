@@ -12,12 +12,12 @@
   --color-paraguay-white: #f1f1ed;
   --color-text-primary: #f5f5f2;
   --color-text-secondary: #b6b9bb;
-  --color-text-muted: #777e82;
+  --color-text-muted: #8a8f92;
   --color-success: #54d255;
   --color-warning: #e8b342;
   --color-border: rgba(255, 255, 255, 0.08);
-  --font-display: "Minecraft Ten", "Press Start 2P", monospace;
-  --font-body: "Inter", "Manrope", sans-serif;
+  --font-display: var(--font-display, "Press Start 2P", monospace);
+  --font-body: var(--font-body, "Inter", sans-serif);
 }
 
 @layer base {
@@ -34,7 +34,7 @@
   body {
     background: #080b0d;
     color: #f5f5f2;
-    font-family: "Inter", "Manrope", sans-serif;
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -45,8 +45,9 @@
   }
 
   :focus-visible {
-    outline: 2px solid #3c7bd9;
+    outline: 3px solid #4c8de8;
     outline-offset: 2px;
+    border-radius: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {

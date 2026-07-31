@@ -35,7 +35,7 @@ export function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[#080b0d]/95 backdrop-blur-sm border-b border-[rgba(255,255,255,0.08)] shadow-[0_1px_0_rgba(0,0,0,0.3)]"
+            ? "bg-[#080b0d] border-b border-[rgba(255,255,255,0.08)] shadow-[0_4px_24px_rgba(0,0,0,0.5)]"
             : "bg-transparent"
         }`}
       >
@@ -75,7 +75,7 @@ export function Header() {
           </div>
 
           <button
-            className="lg:hidden p-2 text-[#b6b9bb] hover:text-[#f1f1ed]"
+            className="lg:hidden p-3 text-[#b6b9bb] hover:text-[#f1f1ed] min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setMobileOpen(true)}
             aria-label="Abrir menú"
           >

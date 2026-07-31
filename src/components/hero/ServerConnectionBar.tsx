@@ -60,7 +60,7 @@ export function ServerConnectionBar() {
 
   return (
     <motion.div
-      className="bg-[#101417]/90 backdrop-blur-sm border border-[rgba(255,255,255,0.1)] shadow-lg px-4 py-3 md:px-6 md:py-4 flex flex-wrap items-center justify-center md:justify-between gap-3 md:gap-6 text-sm"
+      className="bg-[#101417] border border-[rgba(255,255,255,0.1)] shadow-[0_4px_24px_rgba(0,0,0,0.4)] px-4 py-3 md:px-6 md:py-4 flex flex-wrap items-center justify-center md:justify-between gap-3 md:gap-6 text-sm"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4, duration: 0.6 }}
@@ -73,7 +73,7 @@ export function ServerConnectionBar() {
               ? "bg-[#e8b342] animate-pulse"
               : status?.online
                 ? "bg-[#54d255] shadow-[0_0_6px_#54d255]"
-                : "bg-[#777e82]"
+                : "bg-[#8a8f92]"
           }`}
           aria-hidden="true"
         />
@@ -96,12 +96,12 @@ export function ServerConnectionBar() {
         {copied ? (
           <Check size={16} className="text-[#54d255]" />
         ) : (
-          <Copy size={16} className="text-[#777e82]" />
+          <Copy size={16} className="text-[#8a8f92]" />
         )}
       </button>
 
       {/* Version */}
-      <span className="text-[#777e82] text-sm">
+      <span className="text-[#8a8f92] text-sm">
         Versión: {status?.version ?? "—"}
       </span>
     </motion.div>

@@ -36,10 +36,10 @@ export function Footer() {
               <span className="text-[#b6b9bb]">PARAGUAY</span>
               <span className="text-[#d62f2f]">CRAFT</span>
             </span>
-            <p className="text-sm text-[#777e82] mt-3 leading-relaxed">
+            <p className="text-sm text-[#8a8f92] mt-3 leading-relaxed">
               Comunidad, diversión y aventuras sin límites.
             </p>
-            <p className="text-xs text-[#777e82] mt-4">
+            <p className="text-xs text-[#8a8f92] mt-4">
               © 2026 ParaguayCraft. Todos los derechos reservados.
             </p>
           </div>
@@ -84,7 +84,7 @@ export function Footer() {
                 </a>
               ))}
             </div>
-            <p className="text-xs text-[#777e82] mt-4 leading-relaxed">
+            <p className="text-xs text-[#8a8f92] mt-4 leading-relaxed">
               ParaguayCraft no está afiliado con Mojang Studios ni Microsoft.
             </p>
           </div>

@@ -25,7 +25,7 @@ export default function ContactoPage() {
                 Ahí encontrás anuncios, soporte, y a toda la comunidad.
               </p>
               <div>
-                <span className="text-[#777e82]">Discord</span>
+                <span className="text-[#8a8f92]">Discord</span>
                 <p className="text-[#f5f5f2] mt-0.5">
                   <a
                     href={siteConfig.discordUrl}
@@ -38,11 +38,11 @@ export default function ContactoPage() {
                 </p>
               </div>
               <div>
-                <span className="text-[#777e82]">IP del servidor</span>
+                <span className="text-[#8a8f92]">IP del servidor</span>
                 <p className="text-[#f5f5f2] font-mono mt-0.5">{siteConfig.serverIp}</p>
               </div>
               <div>
-                <span className="text-[#777e82]">Redes sociales</span>
+                <span className="text-[#8a8f92]">Redes sociales</span>
                 <ul className="text-[#f5f5f2] mt-0.5 space-y-1">
                   <li>
                     YouTube:{" "}

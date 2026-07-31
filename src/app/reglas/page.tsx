@@ -15,7 +15,7 @@ export default function ReglasPage() {
           Reglas
         </h1>
         <PanelWrapper title="NORMAS DEL SERVIDOR">
-          <p className="text-sm text-[#777e82] text-center py-12">
+          <p className="text-sm text-[#8a8f92] text-center py-12">
             Las reglas del servidor se publicarán próximamente.
           </p>
         </PanelWrapper>

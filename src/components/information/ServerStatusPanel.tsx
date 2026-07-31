@@ -49,32 +49,32 @@ export function ServerStatusPanel() {
   return (
     <PanelWrapper title="ESTADO DEL SERVIDOR">
       {loading ? (
-        <p className="text-sm text-[#777e82] text-center py-8">
+        <p className="text-sm text-[#8a8f92] text-center py-8">
           Consultando servidor...
         </p>
       ) : error || !status ? (
-        <p className="text-sm text-[#777e82] text-center py-8">
+        <p className="text-sm text-[#8a8f92] text-center py-8">
           No se pudo consultar el estado.
         </p>
       ) : (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-[#777e82]">Estado</span>
+            <span className="text-sm text-[#8a8f92]">Estado</span>
             <StatusBadge status={status.online ? "online" : "offline"} />
           </div>
 
           <div>
-            <span className="text-sm text-[#777e82] block mb-1">Jugadores</span>
+            <span className="text-sm text-[#8a8f92] block mb-1">Jugadores</span>
             <PlayerProgressBar current={status.playersOnline} max={status.playersMax} />
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-sm text-[#777e82]">Versión</span>
+            <span className="text-sm text-[#8a8f92]">Versión</span>
             <span className="text-sm text-[#f5f5f2] font-mono">{status.version}</span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-sm text-[#777e82]">IP</span>
+            <span className="text-sm text-[#8a8f92]">IP</span>
             <span className="text-sm text-[#f5f5f2] font-mono">{siteConfig.serverIp}</span>
           </div>
         </div>

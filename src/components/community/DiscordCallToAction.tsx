@@ -8,8 +8,8 @@ import { siteConfig } from "@/config/site";
 export function DiscordCallToAction() {
   return (
     <section className="py-20 md:py-28 px-6 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(60,123,217,0.08)_0%,transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.05)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(60,123,217,0.1)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(214,47,47,0.04)_0%,transparent_60%)]" />
 
       <motion.div
         className="relative z-10 mx-auto max-w-2xl text-center"
@@ -35,7 +35,7 @@ export function DiscordCallToAction() {
           >
             UNIRME AL DISCORD
           </MinecraftButton>
-          <p className="text-sm text-[#777e82]">
+          <p className="text-sm text-[#8a8f92]">
             +500 miembros en nuestra comunidad
           </p>
         </div>

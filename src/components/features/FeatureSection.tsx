@@ -6,6 +6,8 @@ import { FeatureCard } from "./FeatureCard";
 import { features } from "@/data/features";
 
 export function FeatureSection() {
+  const [main, ...rest] = features;
+
   return (
     <section className="py-20 md:py-28 px-6">
       <div className="mx-auto max-w-[1440px]">
@@ -24,9 +26,12 @@ export function FeatureSection() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
-          {features.map((feature, i) => (
-            <FeatureCard key={feature.id} feature={feature} index={i} />
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr] gap-4 md:gap-6">
+          <div className="lg:row-span-2">
+            <FeatureCard feature={main} index={0} variant="hero" />
+          </div>
+          {rest.map((feature, i) => (
+            <FeatureCard key={feature.id} feature={feature} index={i + 1} variant="compact" />
           ))}
         </div>
       </div>
