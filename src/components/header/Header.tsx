@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { MobileNavigation } from "./MobileNavigation";
 import { siteConfig } from "@/config/site";
 
@@ -10,15 +12,15 @@ const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/informacion", label: "Información" },
   { href: "/mapa", label: "Mapa" },
-  { href: siteConfig.storeUrl, label: "Tienda" },
   { href: siteConfig.rulesUrl, label: "Reglas" },
-  { href: siteConfig.votingUrl, label: "Votar" },
   { href: siteConfig.discordUrl, label: "Discord" },
 ];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const { state: copyState, copy } = useCopyToClipboard({ resetAfter: 2000 });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
@@ -29,6 +31,13 @@ export function Header() {
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
   }, [mobileOpen]);
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
+  const handleEnter = () => copy(siteConfig.serverIp);
 
   return (
     <>
@@ -48,30 +57,39 @@ export function Header() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1" aria-label="Navegación principal">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={`px-3 py-2 text-sm font-medium transition-colors relative group ${
-                  link.label === "Inicio"
-                    ? "text-[#f1f1ed] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-6 after:h-[2px] after:bg-[#d62f2f]"
-                    : "text-[#b6b9bb] hover:text-[#f1f1ed]"
-                }`}
-              >
-                {link.label}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#d62f2f] transition-all duration-200 group-hover:w-6" />
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = link.href.startsWith("http") ? false : isActive(link.href);
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`px-3 py-2 text-sm font-medium transition-colors relative group ${
+                    active
+                      ? "text-[#f1f1ed] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-6 after:h-[2px] after:bg-[#d62f2f]"
+                      : "text-[#b6b9bb] hover:text-[#f1f1ed]"
+                  }`}
+                >
+                  {link.label}
+                  {!active && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#d62f2f] transition-all duration-200 group-hover:w-6" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="hidden lg:block">
-            <a
-              href={siteConfig.serverIp}
+            <button
+              type="button"
+              onClick={handleEnter}
               className="inline-flex items-center gap-2 font-display text-xs uppercase tracking-wider px-5 py-2.5 bg-[#d62f2f] border-2 border-[#991f24] text-[#f1f1ed] hover:bg-[#e04040] transition-colors shadow-[inset_0_-3px_0_rgba(0,0,0,0.3)]"
             >
               <span className="text-base" aria-hidden="true">👑</span>
-              ENTRAR
-            </a>
+              {copyState === "copied" ? "IP COPIADA" : "ENTRAR"}
+            </button>
+            <span className="sr-only" role="status" aria-live="polite">
+              {copyState === "copied" ? "Dirección IP copiada" : ""}
+            </span>
           </div>
 
           <button

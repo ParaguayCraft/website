@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { siteConfig } from "@/config/site";
 
 interface MobileNavigationProps {
@@ -14,6 +16,8 @@ interface MobileNavigationProps {
 
 export function MobileNavigation({ open, onClose, links }: MobileNavigationProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const { state: copyState, copy } = useCopyToClipboard({ resetAfter: 2000 });
 
   useEffect(() => {
     if (!open) return;
@@ -23,6 +27,13 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
+  const handleEnter = () => copy(siteConfig.serverIp);
 
   return (
     <AnimatePresence>
@@ -68,36 +79,40 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
             </div>
 
             <nav className="flex-1 px-6 py-8 flex flex-col gap-2" aria-label="Menú móvil">
-              {links.map((link, i) => (
-                <motion.div
-                  key={link.label}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.15, delay: 0.05 + i * 0.03 }}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={onClose}
-                    className={`block px-4 py-3 text-lg font-medium transition-colors ${
-                      link.label === "Inicio"
-                        ? "bg-[rgba(214,47,47,0.15)] text-[#d62f2f]"
-                        : "text-[#b6b9bb] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#f1f1ed]"
-                    }`}
+              {links.map((link, i) => {
+                const active = link.href.startsWith("http") ? false : isActive(link.href);
+                return (
+                  <motion.div
+                    key={link.label}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.15, delay: 0.05 + i * 0.03 }}
                   >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      href={link.href}
+                      onClick={onClose}
+                      className={`block px-4 py-3 text-lg font-medium transition-colors ${
+                        active
+                          ? "bg-[rgba(214,47,47,0.15)] text-[#d62f2f]"
+                          : "text-[#b6b9bb] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#f1f1ed]"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </nav>
 
             <div className="px-6 py-6 border-t border-[rgba(255,255,255,0.08)]">
-              <a
-                href={siteConfig.serverIp}
+              <button
+                type="button"
+                onClick={handleEnter}
                 className="block w-full text-center font-display text-sm uppercase tracking-wider px-6 py-3 bg-[#d62f2f] border-2 border-[#991f24] text-[#f1f1ed] hover:bg-[#e04040] transition-colors shadow-[inset_0_-3px_0_rgba(0,0,0,0.3)]"
               >
-                👑 ENTRAR
-              </a>
+                👑 {copyState === "copied" ? "IP COPIADA" : "ENTRAR"}
+              </button>
             </div>
           </motion.div>
         </motion.div>
