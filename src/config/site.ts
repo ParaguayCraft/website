@@ -1,14 +1,23 @@
-function envUrl(key: string): string | null {
-  const value = process.env[key]?.trim();
-  if (!value || value === "#") return null;
-  return value;
+// Public values are read once at build time from direct static references.
+// Next.js can inline process.env.NEXT_PUBLIC_* only when the key is a
+// literal, so dynamic `process.env[key]` lookups must not be used.
+const publicServerHost = process.env.NEXT_PUBLIC_SERVER_HOST;
+const publicServerDisplayAddress = process.env.NEXT_PUBLIC_SERVER_DISPLAY_ADDRESS;
+const publicDiscordUrl = process.env.NEXT_PUBLIC_DISCORD_URL;
+const publicBlueMapUrl = process.env.NEXT_PUBLIC_BLUEMAP_URL;
+const publicYouTubeUrl = process.env.NEXT_PUBLIC_YOUTUBE_URL;
+const publicTikTokUrl = process.env.NEXT_PUBLIC_TIKTOK_URL;
+
+function normalizeUrl(value: string | undefined): string | null {
+  const normalized = value?.trim();
+  return normalized && normalized !== "#" ? normalized : null;
 }
 
-function requireEnv(key: string, fallback: string): string {
-  return envUrl(key) ?? fallback;
+function requireUrl(value: string | undefined, fallback: string): string {
+  return normalizeUrl(value) ?? fallback;
 }
 
-const bluemapRaw = envUrl("NEXT_PUBLIC_BLUEMAP_URL");
+const bluemapRaw = normalizeUrl(publicBlueMapUrl);
 const isProduction = process.env.NODE_ENV === "production";
 
 export const siteConfig = {
@@ -16,11 +25,8 @@ export const siteConfig = {
   description:
     "Un servidor de Minecraft para todos los paraguayos y amigos. Comunidad, diversión y aventuras sin límites.",
 
-  serverHost: requireEnv("NEXT_PUBLIC_SERVER_HOST", "play.paraguaycraft.com"),
-  serverDisplayAddress: requireEnv(
-    "NEXT_PUBLIC_SERVER_DISPLAY_ADDRESS",
-    "play.paraguaycraft.com",
-  ),
+  serverHost: requireUrl(publicServerHost, "play.paraguaycraft.com"),
+  serverDisplayAddress: requireUrl(publicServerDisplayAddress, "play.paraguaycraft.com"),
   // Backward-compat alias — prefer serverDisplayAddress for copy, serverHost for connectivity
   get serverIp(): string {
     return this.serverDisplayAddress;
@@ -28,7 +34,7 @@ export const siteConfig = {
   supportedVersion: "1.21+",
   serverQueryPort: Number(process.env.SERVER_QUERY_PORT) || 25577,
 
-  discordUrl: envUrl("NEXT_PUBLIC_DISCORD_URL") ?? "https://discord.gg/paraguaycraft",
+  discordUrl: normalizeUrl(publicDiscordUrl) ?? "https://discord.gg/paraguaycraft",
   storeUrl: "/tienda",
   votingUrl: "/votar",
   rulesUrl: "/reglas",
@@ -41,8 +47,8 @@ export const siteConfig = {
       : bluemapRaw ?? null,
 
   socialLinks: {
-    discord: envUrl("NEXT_PUBLIC_DISCORD_URL") ?? "https://discord.gg/paraguaycraft",
-    youtube: envUrl("NEXT_PUBLIC_YOUTUBE_URL"),
-    tiktok: envUrl("NEXT_PUBLIC_TIKTOK_URL"),
+    discord: normalizeUrl(publicDiscordUrl) ?? "https://discord.gg/paraguaycraft",
+    youtube: normalizeUrl(publicYouTubeUrl),
+    tiktok: normalizeUrl(publicTikTokUrl),
   },
 } as const;
