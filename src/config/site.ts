@@ -8,6 +8,7 @@ export const siteConfig = {
   storeUrl: "/tienda",
   votingUrl: "/votar",
   rulesUrl: "/reglas",
+  blueMapUrl: "http://localhost:8100",
   socialLinks: {
     discord: "https://discord.gg/PLACEHOLDER",
     youtube: "#",
