@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageLayout from "@/components/ui/PageLayout";
 import { PanelWrapper } from "@/components/information/PanelWrapper";
+import { ServerImage } from "@/components/ui/ServerImage";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -33,13 +34,7 @@ export default function InformacionPage() {
               crece día a día. Ya seas constructor, comerciante, guerrero o explorador, hay un
               lugar para vos en ParaguayCraft.
             </p>
-            <div className="aspect-video bg-[#101417] border border-[rgba(255,255,255,0.06)] flex items-center justify-center" aria-hidden="true">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#1a1f23]">
-                <rect x="4" y="4" width="40" height="40" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                <circle cx="18" cy="18" r="4" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M4 38l10-10 6 6 10-10 14 14" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
-            </div>
+            <ServerImage alt="Captura del servidor ParaguayCraft" />
           </PanelWrapper>
 
           <PanelWrapper title="CÓMO CONECTARSE">
