@@ -15,25 +15,34 @@ export function ServerStatusPanel() {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    setError(false);
+    let interval: ReturnType<typeof setInterval>;
 
-    fetchServerStatus()
-      .then((data) => {
-        if (!cancelled) setStatus(data);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setError(true);
-          setStatus(null);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    const fetchStatus = () => {
+      setLoading(true);
+      setError(false);
+
+      fetchServerStatus()
+        .then((data) => {
+          if (!cancelled) {
+            setStatus(data);
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setError(true);
+            setStatus(null);
+            setLoading(false);
+          }
+        });
+    };
+
+    fetchStatus();
+    interval = setInterval(fetchStatus, 30_000);
 
     return () => {
       cancelled = true;
+      clearInterval(interval);
     };
   }, []);
 

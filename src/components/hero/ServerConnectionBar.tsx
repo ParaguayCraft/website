@@ -14,25 +14,36 @@ export function ServerConnectionBar() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchServerStatus()
-      .then((data) => {
-        if (!cancelled) setStatus(data);
-      })
-      .catch(() => {
-        if (!cancelled)
-          setStatus({
-            online: false,
-            playersOnline: 0,
-            playersMax: 0,
-            version: "—",
-            address: siteConfig.serverIp,
-          });
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    let interval: ReturnType<typeof setInterval>;
+
+    const fetchStatus = () => {
+      fetchServerStatus()
+        .then((data) => {
+          if (!cancelled) {
+            setStatus(data);
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setStatus({
+              online: false,
+              playersOnline: 0,
+              playersMax: 0,
+              version: "—",
+              address: siteConfig.serverIp,
+            });
+            setLoading(false);
+          }
+        });
+    };
+
+    fetchStatus();
+    interval = setInterval(fetchStatus, 30_000);
+
     return () => {
       cancelled = true;
+      clearInterval(interval);
     };
   }, []);
 
