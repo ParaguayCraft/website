@@ -13,7 +13,7 @@ export default function MapaPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 flex flex-col pt-[88px] h-[calc(100vh-88px)]">
+      <main id="main-content" className="flex-1 flex flex-col pt-[88px] h-[calc(100vh-88px)]">
         <MapaViewer />
       </main>
       <Footer />
