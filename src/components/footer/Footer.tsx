@@ -13,10 +13,10 @@ const quickLinks = [
 ];
 
 const socialIcons = [
-  { href: siteConfig.socialLinks.discord, label: "Discord", icon: MessageCircle },
-  { href: siteConfig.socialLinks.youtube, label: "YouTube", icon: SquarePlay },
-  { href: siteConfig.socialLinks.tiktok, label: "TikTok", icon: Music2 },
-];
+  siteConfig.socialLinks.discord && { href: siteConfig.socialLinks.discord, label: "Discord", icon: MessageCircle },
+  siteConfig.socialLinks.youtube && { href: siteConfig.socialLinks.youtube, label: "YouTube", icon: SquarePlay },
+  siteConfig.socialLinks.tiktok && { href: siteConfig.socialLinks.tiktok, label: "TikTok", icon: Music2 },
+].filter(Boolean) as { href: string; label: string; icon: React.ComponentType<{ size: number }> }[];
 
 export function Footer() {
   return (

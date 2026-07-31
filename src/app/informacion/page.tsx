@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageLayout from "@/components/ui/PageLayout";
 import { PanelWrapper } from "@/components/information/PanelWrapper";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Información | ParaguayCraft",
@@ -41,7 +42,7 @@ export default function InformacionPage() {
             <div className="space-y-4 text-sm">
               <div>
                 <span className="text-[#8a8f92]">IP del servidor</span>
-                <p className="text-[#f5f5f2] font-mono mt-0.5">play.paraguaycraft.com</p>
+                <p className="text-[#f5f5f2] font-mono mt-0.5">{siteConfig.serverDisplayAddress}</p>
               </div>
               <div>
                 <span className="text-[#8a8f92]">Versión</span>

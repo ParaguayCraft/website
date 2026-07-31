@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const host = `${siteConfig.serverIp}:25577`;
+    const host = `${siteConfig.serverHost}:${siteConfig.serverQueryPort}`;
     const res = await fetch(`https://api.mcsrvstat.us/3/${encodeURIComponent(host)}`, {
       next: { revalidate: 0 },
       signal: AbortSignal.timeout(5000),
