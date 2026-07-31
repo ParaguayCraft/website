@@ -6,8 +6,6 @@ const quickLinks = [
   { href: "/informacion", label: "Información" },
   { href: "/mapa", label: "Mapa" },
   { href: siteConfig.rulesUrl, label: "Reglas" },
-  { href: siteConfig.storeUrl, label: "Tienda" },
-  { href: siteConfig.votingUrl, label: "Votar" },
   { href: siteConfig.discordUrl, label: "Discord" },
   { href: "/contacto", label: "Contacto" },
 ];

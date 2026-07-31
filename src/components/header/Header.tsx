@@ -10,9 +10,7 @@ const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/informacion", label: "Información" },
   { href: "/mapa", label: "Mapa" },
-  { href: siteConfig.storeUrl, label: "Tienda" },
   { href: siteConfig.rulesUrl, label: "Reglas" },
-  { href: siteConfig.votingUrl, label: "Votar" },
   { href: siteConfig.discordUrl, label: "Discord" },
 ];
 

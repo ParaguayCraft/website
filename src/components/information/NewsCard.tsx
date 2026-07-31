@@ -8,8 +8,8 @@ export function NewsCard({ item }: NewsCardProps) {
   return (
     <div className="group border-b border-[rgba(255,255,255,0.05)] pb-4 last:border-0 last:pb-0">
       <div className="flex gap-3">
-        <div className="w-14 h-14 bg-[#101417] border border-[rgba(255,255,255,0.06)] flex-shrink-0 flex items-center justify-center text-[#8a8f92] text-[10px]">
-          IMG
+        <div className="w-14 h-14 bg-[#101417] border border-[rgba(255,255,255,0.06)] flex-shrink-0 flex items-center justify-center" aria-hidden="true">
+          <span className="text-[#1a1f23] text-[10px] font-display uppercase">{item.category.slice(0, 4)}</span>
         </div>
         <div className="flex-1 min-w-0">
           <span className="text-[10px] text-[#d62f2f] font-medium uppercase tracking-wider">
