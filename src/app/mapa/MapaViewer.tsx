@@ -17,7 +17,7 @@ export function MapaViewer() {
         </div>
       )}
       <iframe
-        src={siteConfig.blueMapUrl}
+        src={siteConfig.blueMapUrl ?? undefined}
         title="Mapa interactivo de ParaguayCraft"
         className="absolute inset-0 w-full h-full border-none"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
