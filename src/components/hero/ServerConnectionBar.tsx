@@ -1,54 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { motion } from "framer-motion";
 import { Copy, Check, AlertCircle } from "lucide-react";
-import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
-import { fetchServerStatus } from "@/services/minecraftStatus";
-import type { ServerStatus } from "@/types/server";
+import { useServerStatus } from "@/components/status/ServerStatusProvider";
 import { siteConfig } from "@/config/site";
 
 export function ServerConnectionBar() {
-  const [status, setStatus] = useState<ServerStatus | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { status, state } = useServerStatus();
   const { state: copyState, copy } = useCopyToClipboard({ resetAfter: 1500 });
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchStatus = () => {
-      fetchServerStatus()
-        .then((data) => {
-          if (!cancelled) {
-            setStatus(data);
-            setLoading(false);
-          }
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setStatus({
-              online: false,
-              playersOnline: 0,
-              playersMax: 0,
-              version: "—",
-              address: siteConfig.serverIp,
-            });
-            setLoading(false);
-          }
-        });
-    };
-
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 30_000);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, []);
-
-  const handleCopyIp = () => copy(siteConfig.serverIp);
-
+  const handleCopyIp = () => copy(siteConfig.serverDisplayAddress);
+  const isLoading = state === "initial";
   const copied = copyState === "copied";
   const failed = copyState === "failed";
 
@@ -62,7 +25,7 @@ export function ServerConnectionBar() {
       <div className="flex items-center gap-2">
         <span
           className={`w-2.5 h-2.5 rounded-full ${
-            loading
+            isLoading
               ? "bg-[#e8b342] animate-pulse"
               : status?.online
                 ? "bg-[#54d255] shadow-[0_0_6px_#54d255]"
@@ -71,20 +34,22 @@ export function ServerConnectionBar() {
           aria-hidden="true"
         />
         <span className="text-[#b6b9bb]">
-          {loading
+          {isLoading
             ? "Consultando servidor..."
-            : status?.online
-              ? `${status.playersOnline} jugadores conectados`
-              : "Servidor desconectado"}
+            : state === "provider-unavailable" && !status
+              ? "No se pudo consultar"
+              : status?.online
+                ? `${status.playersOnline} jugadores conectados`
+                : "Servidor desconectado"}
         </span>
       </div>
 
       <button
         onClick={handleCopyIp}
         className="flex items-center gap-1.5 text-[#f5f5f2] hover:text-[#3c7bd9] transition-colors cursor-pointer font-mono text-sm"
-        aria-label={`Copiar IP del servidor: ${siteConfig.serverIp}`}
+        aria-label={`Copiar IP del servidor: ${siteConfig.serverDisplayAddress}`}
       >
-        <span>IP: {siteConfig.serverIp}</span>
+        <span>IP: {siteConfig.serverDisplayAddress}</span>
         {copied ? (
           <Check size={16} className="text-[#54d255]" />
         ) : failed ? (
@@ -95,11 +60,13 @@ export function ServerConnectionBar() {
       </button>
 
       <span className="sr-only" role="status" aria-live="polite">
-        {copied
-          ? "IP copiada"
-          : failed
-            ? `No se pudo copiar. IP: ${siteConfig.serverIp}`
-            : ""}
+        {copyState === "copied"
+          ? `Dirección IP copiada: ${siteConfig.serverDisplayAddress}`
+          : copyState === "failed"
+            ? `No se pudo copiar la dirección IP: ${siteConfig.serverDisplayAddress}`
+            : copyState === "copying"
+              ? `Copiando la dirección IP: ${siteConfig.serverDisplayAddress}`
+              : ""}
       </span>
 
       <span className="text-[#8a8f92] text-sm">

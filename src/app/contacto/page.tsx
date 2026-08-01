@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default function ContactoPage() {
+  const { socialLinks } = siteConfig;
+
   return (
     <PageLayout>
       <div className="mx-auto max-w-[1440px] px-6 md:px-12 py-16 md:py-24">
@@ -39,31 +41,31 @@ export default function ContactoPage() {
               </div>
               <div>
                 <span className="text-[#8a8f92]">IP del servidor</span>
-                <p className="text-[#f5f5f2] font-mono mt-0.5">{siteConfig.serverIp}</p>
+                <p className="text-[#f5f5f2] font-mono mt-0.5">{siteConfig.serverDisplayAddress}</p>
               </div>
-              <div>
-                <span className="text-[#8a8f92]">Redes sociales</span>
-                <ul className="text-[#f5f5f2] mt-0.5 space-y-1">
-                  <li>
-                    YouTube:{" "}
-                    <a
-                      href={siteConfig.socialLinks.youtube}
-                      className="text-[#3c7bd9] hover:underline"
-                    >
-                      {siteConfig.socialLinks.youtube}
-                    </a>
-                  </li>
-                  <li>
-                    TikTok:{" "}
-                    <a
-                      href={siteConfig.socialLinks.tiktok}
-                      className="text-[#3c7bd9] hover:underline"
-                    >
-                      {siteConfig.socialLinks.tiktok}
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              {(socialLinks.youtube || socialLinks.tiktok) && (
+                <div>
+                  <span className="text-[#8a8f92]">Redes sociales</span>
+                  <ul className="text-[#f5f5f2] mt-0.5 space-y-1">
+                    {socialLinks.youtube && (
+                      <li>
+                        YouTube:{" "}
+                        <a href={socialLinks.youtube} className="text-[#3c7bd9] hover:underline">
+                          {socialLinks.youtube}
+                        </a>
+                      </li>
+                    )}
+                    {socialLinks.tiktok && (
+                      <li>
+                        TikTok:{" "}
+                        <a href={socialLinks.tiktok} className="text-[#3c7bd9] hover:underline">
+                          {socialLinks.tiktok}
+                        </a>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
           </PanelWrapper>
         </div>
