@@ -7,6 +7,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { siteConfig } from "@/config/site";
+import {
+  getCopyButtonLabel,
+  getCopyStatusMessage,
+  isActiveNavigationPath,
+  isExternalNavigationLink,
+} from "./navigation";
 
 interface MobileNavigationProps {
   open: boolean;
@@ -27,11 +33,6 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
-
-  const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
-  };
 
   const handleEnter = () => copy(siteConfig.serverIp);
 
@@ -80,7 +81,15 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
 
             <nav className="flex-1 px-6 py-8 flex flex-col gap-2" aria-label="Menú móvil">
               {links.map((link, i) => {
-                const active = link.href.startsWith("http") ? false : isActive(link.href);
+                const external = isExternalNavigationLink(link.href);
+                const active = !external && isActiveNavigationPath(pathname, link.href);
+                const className = `block px-4 py-3 text-lg font-medium transition-colors ${
+                  active
+                    ? "bg-[rgba(214,47,47,0.15)] text-[#d62f2f]"
+                    : "text-[#b6b9bb] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#f1f1ed]"
+                }`;
+                const content = link.label;
+
                 return (
                   <motion.div
                     key={link.label}
@@ -89,17 +98,26 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.15, delay: 0.05 + i * 0.03 }}
                   >
-                    <Link
-                      href={link.href}
-                      onClick={onClose}
-                      className={`block px-4 py-3 text-lg font-medium transition-colors ${
-                        active
-                          ? "bg-[rgba(214,47,47,0.15)] text-[#d62f2f]"
-                          : "text-[#b6b9bb] hover:bg-[rgba(255,255,255,0.04)] hover:text-[#f1f1ed]"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
+                    {external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={onClose}
+                        className={className}
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        onClick={onClose}
+                        className={className}
+                        aria-current={active ? "page" : undefined}
+                      >
+                        {content}
+                      </Link>
+                    )}
                   </motion.div>
                 );
               })}
@@ -111,8 +129,11 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
                 onClick={handleEnter}
                 className="block w-full text-center font-display text-sm uppercase tracking-wider px-6 py-3 bg-[#d62f2f] border-2 border-[#991f24] text-[#f1f1ed] hover:bg-[#e04040] transition-colors shadow-[inset_0_-3px_0_rgba(0,0,0,0.3)]"
               >
-                👑 {copyState === "copied" ? "IP COPIADA" : "ENTRAR"}
+                👑 {getCopyButtonLabel(copyState)}
               </button>
+              <span className="sr-only" role="status" aria-live="polite">
+                {getCopyStatusMessage(copyState, siteConfig.serverIp)}
+              </span>
             </div>
           </motion.div>
         </motion.div>
