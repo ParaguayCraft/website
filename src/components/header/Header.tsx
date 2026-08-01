@@ -34,9 +34,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-  }, [mobileOpen]);
 
   const handleEnter = () => copy(siteConfig.serverIp);
 
@@ -116,6 +113,8 @@ export function Header() {
             className="lg:hidden p-3 text-[#b6b9bb] hover:text-[#f1f1ed] min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setMobileOpen(true)}
             aria-label="Abrir menú"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-dialog"
           >
             <Menu size={24} />
           </button>
