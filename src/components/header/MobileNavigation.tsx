@@ -129,7 +129,7 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
         >
           <motion.div
             className="absolute inset-0 bg-black/60"
-            onClick={closeAndRestoreFocus}
+            onClick={handleClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -154,7 +154,7 @@ export function MobileNavigation({ open, onClose, links }: MobileNavigationProps
               </span>
               <button
                 ref={closeRef}
-                onClick={closeAndRestoreFocus}
+                onClick={handleClose}
                 className="p-3 text-[#b6b9bb] hover:text-[#f1f1ed] min-w-[44px] min-h-[44px] flex items-center justify-center"
                 aria-label="Cerrar menú"
               >
