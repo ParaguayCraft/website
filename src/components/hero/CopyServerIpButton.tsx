@@ -1,32 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { MinecraftButton } from "@/components/ui/MinecraftButton";
-import { Sword } from "lucide-react";
+import { Sword, Check, AlertCircle } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 export function CopyServerIpButton() {
-  const [copied, setCopied] = useState(false);
+  const { state, copy } = useCopyToClipboard();
+  const handleCopy = () => copy(siteConfig.serverIp);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(siteConfig.serverDisplayAddress);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback: just show the IP was "copied"
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+  const labels: Record<string, string> = {
+    idle: "JUGAR AHORA",
+    copying: "COPIANDO...",
+    copied: "IP COPIADA",
+    failed: "NO SE PUDO COPIAR",
   };
 
   return (
-    <MinecraftButton
-      variant="primary"
-      onClick={handleCopy}
-      icon={<Sword size={20} />}
-    >
-      {copied ? "IP COPIADA" : "JUGAR AHORA"}
-    </MinecraftButton>
+    <div className="relative inline-flex">
+      <MinecraftButton
+        variant="primary"
+        onClick={handleCopy}
+        icon={
+          state === "copied" ? (
+            <Check size={20} />
+          ) : state === "failed" ? (
+            <AlertCircle size={20} />
+          ) : (
+            <Sword size={20} />
+          )
+        }
+      >
+        {labels[state]}
+      </MinecraftButton>
+      <span className="sr-only" role="status" aria-live="polite">
+        {state === "copied"
+          ? "Dirección IP copiada"
+          : state === "failed"
+            ? `No se pudo copiar. IP: ${siteConfig.serverIp}`
+            : ""}
+      </span>
+    </div>
   );
 }

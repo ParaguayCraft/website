@@ -8,7 +8,9 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "test:route": "node --import=tsx --test test/status-route.test.ts"
+    "test:route": "node --import=tsx --test test/status-route.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm run build"
   },
   "dependencies": {
     "framer-motion": "^12.43.0",

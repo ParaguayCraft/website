@@ -1,14 +1,24 @@
 "use client";
 
 import { type ReactNode } from "react";
+import Link from "next/link";
 
 interface MinecraftButtonProps {
   children: ReactNode;
   variant?: "primary" | "secondary" | "outline";
   onClick?: () => void;
+  /** Internal routes (/) or external URLs (https://...) */
   href?: string;
   className?: string;
   icon?: ReactNode;
+}
+
+function isExternalLink(href: string): boolean {
+  return /^(https?:\/\/|mailto:|tel:)/.test(href);
+}
+
+function isInvalidHref(href: string): boolean {
+  return href === "" || href === "#";
 }
 
 export function MinecraftButton({
@@ -31,15 +41,40 @@ export function MinecraftButton({
       "bg-transparent border-[rgba(255,255,255,0.15)] text-[#f5f5f2] hover:bg-[rgba(255,255,255,0.05)] hover:border-[#3c7bd9] active:scale-[0.98]",
   };
 
-  const Tag = href ? "a" : "button";
-  const tagProps = href
-    ? { href, target: "_blank", rel: "noopener noreferrer" }
-    : { onClick, type: "button" as const };
+  // Button — no href at all
+  if (!href || isInvalidHref(href)) {
+    return (
+      <button
+        type="button"
+        className={`${base} ${variants[variant]} ${className}`}
+        onClick={onClick}
+      >
+        {icon}
+        {children}
+      </button>
+    );
+  }
 
+  // External URL — standard anchor
+  if (isExternalLink(href)) {
+    return (
+      <a
+        href={href}
+        className={`${base} ${variants[variant]} ${className}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {icon}
+        {children}
+      </a>
+    );
+  }
+
+  // Internal route — Next.js Link
   return (
-    <Tag className={`${base} ${variants[variant]} ${className}`} {...tagProps}>
+    <Link href={href} className={`${base} ${variants[variant]} ${className}`}>
       {icon}
       {children}
-    </Tag>
+    </Link>
   );
 }
