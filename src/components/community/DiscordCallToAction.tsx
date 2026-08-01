@@ -36,7 +36,7 @@ export function DiscordCallToAction() {
             UNIRME AL DISCORD
           </MinecraftButton>
           <p className="text-sm text-[#8a8f92]">
-            +500 miembros en nuestra comunidad
+            Anuncios, soporte, eventos y comunidad
           </p>
         </div>
       </motion.div>
