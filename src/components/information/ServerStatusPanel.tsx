@@ -7,9 +7,25 @@ import { useServerStatus } from "@/components/status/ServerStatusProvider";
 import { siteConfig } from "@/config/site";
 
 export function ServerStatusPanel() {
-  const { status, state } = useServerStatus();
+  const { status, state, stale } = useServerStatus();
 
   const isLoading = state === "initial";
+  const badgeStatus =
+    state === "provider-unavailable"
+      ? "unavailable"
+      : status?.online
+        ? "online"
+        : "offline";
+  const statusAnnouncement =
+    state === "provider-unavailable"
+      ? stale
+        ? "No se pudo actualizar el estado. Mostrando el último estado conocido."
+        : "No se pudo consultar el estado del servidor."
+      : state === "online"
+        ? "Servidor en línea."
+        : state === "offline"
+          ? "Servidor desconectado."
+          : "Consultando el estado del servidor.";
 
   return (
     <PanelWrapper title="ESTADO DEL SERVIDOR">
@@ -18,15 +34,27 @@ export function ServerStatusPanel() {
           Consultando servidor...
         </p>
       ) : !status ? (
-        <p className="text-sm text-[#8a8f92] text-center py-8">
-          No se pudo consultar el estado.
-        </p>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-[#8a8f92]">Estado</span>
+            <StatusBadge status="unavailable" />
+          </div>
+          <p className="text-sm text-[#8a8f92] text-center py-4">
+            No se pudo consultar el estado.
+          </p>
+        </div>
       ) : (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-[#8a8f92]">Estado</span>
-            <StatusBadge status={status.online ? "online" : "offline"} />
+            <StatusBadge status={badgeStatus} />
           </div>
+
+          {stale && (
+            <p className="text-xs text-[#e8b342]" role="note">
+              Mostrando el último estado conocido; puede estar desactualizado.
+            </p>
+          )}
 
           <div>
             <span className="text-sm text-[#8a8f92] block mb-1">Jugadores</span>
@@ -44,6 +72,9 @@ export function ServerStatusPanel() {
           </div>
         </div>
       )}
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {statusAnnouncement}
+      </p>
     </PanelWrapper>
   );
 }
