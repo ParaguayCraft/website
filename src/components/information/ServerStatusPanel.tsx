@@ -9,17 +9,13 @@ import { siteConfig } from "@/config/site";
 export function ServerStatusPanel() {
   const { status, state } = useServerStatus();
 
-  const isLoading = state === "initial" || state === "loading";
+  const isLoading = state === "initial";
 
   return (
     <PanelWrapper title="ESTADO DEL SERVIDOR">
       {isLoading ? (
         <p className="text-sm text-[#8a8f92] text-center py-8">
           Consultando servidor...
-        </p>
-      ) : state === "provider-unavailable" ? (
-        <p className="text-sm text-[#8a8f92] text-center py-8">
-          No se pudo consultar el estado.
         </p>
       ) : !status ? (
         <p className="text-sm text-[#8a8f92] text-center py-8">

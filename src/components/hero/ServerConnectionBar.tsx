@@ -21,7 +21,7 @@ export function ServerConnectionBar() {
     }
   }, []);
 
-  const isLoading = state === "initial" || state === "loading";
+  const isLoading = state === "initial";
 
   return (
     <motion.div
@@ -44,7 +44,7 @@ export function ServerConnectionBar() {
         <span className="text-[#b6b9bb]">
           {isLoading
             ? "Consultando servidor..."
-            : state === "provider-unavailable"
+            : state === "provider-unavailable" && !status
               ? "No se pudo consultar"
               : status?.online
                 ? `${status.playersOnline} jugadores conectados`
