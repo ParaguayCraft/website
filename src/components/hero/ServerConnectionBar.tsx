@@ -14,7 +14,6 @@ export function ServerConnectionBar() {
 
   useEffect(() => {
     let cancelled = false;
-    let interval: ReturnType<typeof setInterval>;
 
     const fetchStatus = () => {
       fetchServerStatus()
@@ -39,7 +38,7 @@ export function ServerConnectionBar() {
     };
 
     fetchStatus();
-    interval = setInterval(fetchStatus, 30_000);
+    const interval = setInterval(fetchStatus, 30_000);
 
     return () => {
       cancelled = true;

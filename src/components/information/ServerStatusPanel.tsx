@@ -15,7 +15,6 @@ export function ServerStatusPanel() {
 
   useEffect(() => {
     let cancelled = false;
-    let interval: ReturnType<typeof setInterval>;
 
     const fetchStatus = () => {
       setLoading(true);
@@ -38,7 +37,7 @@ export function ServerStatusPanel() {
     };
 
     fetchStatus();
-    interval = setInterval(fetchStatus, 30_000);
+    const interval = setInterval(fetchStatus, 30_000);
 
     return () => {
       cancelled = true;
