@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ExternalLink, RefreshCw } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
@@ -10,26 +10,36 @@ export function MapaViewer() {
   const [state, setState] = useState<"loading" | "loaded" | "timeout" | "config-missing">(
     siteConfig.blueMapUrl ? "loading" : "config-missing",
   );
+  const [retryKey, setRetryKey] = useState(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const clearLoadingTimeout = useCallback(() => {
+    if (timeoutRef.current !== undefined) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = undefined;
+    }
+  }, []);
+
+  const scheduleTimeout = useCallback(() => {
+    clearLoadingTimeout();
+    timeoutRef.current = setTimeout(() => {
+      setState((prev) => (prev === "loading" ? "timeout" : prev));
+    }, LOADING_TIMEOUT_MS);
+  }, [clearLoadingTimeout]);
 
   useEffect(() => {
     if (!siteConfig.blueMapUrl) return;
 
-    timeoutRef.current = setTimeout(() => {
-      setState((prev) => (prev === "loading" ? "timeout" : prev));
-    }, LOADING_TIMEOUT_MS);
+    scheduleTimeout();
+    return clearLoadingTimeout;
+  }, [clearLoadingTimeout, scheduleTimeout]);
 
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
+    clearLoadingTimeout();
+    setRetryKey((value) => value + 1);
     setState("loading");
-    timeoutRef.current = setTimeout(() => {
-      setState((prev) => (prev === "loading" ? "timeout" : prev));
-    }, LOADING_TIMEOUT_MS);
-  };
+    scheduleTimeout();
+  }, [clearLoadingTimeout, scheduleTimeout]);
 
   if (state === "config-missing") {
     return (
@@ -85,18 +95,19 @@ export function MapaViewer() {
         </div>
       )}
 
+      {/* BlueMap needs scripts and same-origin DOM access; no broader permissions are granted. */}
       <iframe
-        key={state === "loading" ? undefined : "reload"}
+        key={retryKey}
         src={mapUrl}
         title="Mapa interactivo de ParaguayCraft"
         className="absolute inset-0 w-full h-full border-none"
         onLoad={() => {
           setState("loaded");
-          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          clearLoadingTimeout();
         }}
         onError={() => {
           setState("timeout");
-          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          clearLoadingTimeout();
         }}
         referrerPolicy="no-referrer"
         sandbox="allow-scripts allow-same-origin"

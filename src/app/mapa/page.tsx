@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
-import { siteConfig } from "@/config/site";
 import { MapaViewer } from "./MapaViewer";
 
 export const metadata: Metadata = {
