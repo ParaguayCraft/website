@@ -4,8 +4,8 @@ import { siteConfig } from "@/config/site";
 
 export type { StatusApiResponse };
 
-export async function fetchServerStatus(): Promise<StatusApiResponse> {
-  const res = await fetch("/api/status");
+export async function fetchServerStatus(signal?: AbortSignal): Promise<StatusApiResponse> {
+  const res = await fetch("/api/status", { signal });
   if (!res.ok && res.status >= 500) {
     const body = await res.json().catch(() => null);
     return body ?? { ok: false, error: "provider_unavailable" };

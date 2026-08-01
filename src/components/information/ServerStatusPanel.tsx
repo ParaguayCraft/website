@@ -1,57 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { PanelWrapper } from "./PanelWrapper";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { PlayerProgressBar } from "@/components/ui/PlayerProgressBar";
-import { fetchServerStatus, toLegacyStatus } from "@/services/minecraftStatus";
-import type { ServerStatus } from "@/types/server";
+import { useServerStatus } from "@/components/status/ServerStatusProvider";
 import { siteConfig } from "@/config/site";
 
 export function ServerStatusPanel() {
-  const [status, setStatus] = useState<ServerStatus | null>(null);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { status, state } = useServerStatus();
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchStatus = () => {
-      setLoading(true);
-      setError(false);
-
-      fetchServerStatus()
-        .then((response) => {
-          if (!cancelled) {
-            setStatus(toLegacyStatus(response));
-            setLoading(false);
-          }
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setError(true);
-            setStatus(null);
-            setLoading(false);
-          }
-        });
-    };
-
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 30_000);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, []);
+  const isLoading = state === "initial";
 
   return (
     <PanelWrapper title="ESTADO DEL SERVIDOR">
-      {loading ? (
+      {isLoading ? (
         <p className="text-sm text-[#8a8f92] text-center py-8">
           Consultando servidor...
         </p>
-      ) : error || !status ? (
+      ) : !status ? (
         <p className="text-sm text-[#8a8f92] text-center py-8">
           No se pudo consultar el estado.
         </p>
