@@ -12,7 +12,18 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    ".e2e/**",
+    "playwright-report/**",
+    "test-results/**",
   ]),
+  // Playwright specs and fixtures are not React code; relax app-oriented rules.
+  {
+    files: ["e2e/**/*.ts", "playwright.config.ts"],
+    rules: {
+      "react-hooks/rules-of-hooks": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;
