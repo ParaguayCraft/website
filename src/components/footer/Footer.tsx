@@ -5,7 +5,6 @@ import { siteConfig } from "@/config/site";
 const quickLinks = [
   { href: "/informacion", label: "Información" },
   { href: "/mapa", label: "Mapa" },
-  { href: siteConfig.rulesUrl, label: "Reglas" },
   { href: siteConfig.discordUrl, label: "Discord" },
   { href: "/contacto", label: "Contacto" },
 ];
