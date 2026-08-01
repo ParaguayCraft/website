@@ -12,6 +12,11 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+
+# e2e isolated server copy
+/.e2e/
 
 # next.js
 /.next/
