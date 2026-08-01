@@ -1,4 +1,5 @@
 import type { NewsItem } from "@/types/news";
+import { parseLocalDate } from "@/lib/dates";
 
 interface NewsCardProps {
   item: NewsItem;
@@ -20,7 +21,7 @@ export function NewsCard({ item }: NewsCardProps) {
           </h4>
           <p className="text-xs text-[#8a8f92] mt-0.5 line-clamp-2">{item.summary}</p>
           <time className="text-xs text-[#8a8f92] mt-1 block" dateTime={item.date}>
-            {new Date(item.date).toLocaleDateString("es-PY", {
+            {parseLocalDate(item.date).toLocaleDateString("es-PY", {
               day: "numeric",
               month: "short",
               year: "numeric",
