@@ -6,17 +6,19 @@ interface PlayerProgressBarProps {
 }
 
 export function PlayerProgressBar({ current, max, className = "" }: PlayerProgressBarProps) {
-  const showBar = max !== null && max > 0;
-
-  const pct = showBar
-    ? Math.min(Math.max((current / max!) * 100, 0), 100)
-    : 0;
+  const safeCurrent = Number.isFinite(current) ? Math.max(current, 0) : 0;
+  const safeMax =
+    max !== null && Number.isFinite(max) && max > 0 ? max : null;
+  const ariaCurrent =
+    safeMax !== null ? Math.min(safeCurrent, safeMax) : safeCurrent;
+  const showBar = safeMax !== null;
+  const pct = safeMax === null ? 0 : (ariaCurrent / safeMax) * 100;
 
   return (
     <div className={`w-full ${className}`}>
       <div className="flex justify-between text-sm text-[#b6b9bb] mb-1">
         <span>
-          {current}{showBar ? ` / ${max}` : ""}
+          {ariaCurrent}{showBar ? ` / ${safeMax}` : ""}
         </span>
       </div>
       {showBar && (
@@ -25,9 +27,9 @@ export function PlayerProgressBar({ current, max, className = "" }: PlayerProgre
             className="h-full bg-[#54d255] transition-all duration-700"
             style={{ width: `${pct}%` }}
             role="progressbar"
-            aria-valuenow={current}
+            aria-valuenow={ariaCurrent}
             aria-valuemin={0}
-            aria-valuemax={max ?? undefined}
+            aria-valuemax={safeMax ?? undefined}
           />
         </div>
       )}

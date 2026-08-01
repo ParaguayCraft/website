@@ -1,5 +1,3 @@
-import { AlertCircle } from "lucide-react";
-
 type StatusType = "online" | "offline" | "unavailable";
 
 interface StatusBadgeProps {
