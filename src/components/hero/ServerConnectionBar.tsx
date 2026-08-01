@@ -1,26 +1,18 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, AlertCircle } from "lucide-react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { useServerStatus } from "@/components/status/ServerStatusProvider";
 import { siteConfig } from "@/config/site";
 
 export function ServerConnectionBar() {
   const { status, state } = useServerStatus();
-  const [copied, setCopied] = useState(false);
+  const { state: copyState, copy } = useCopyToClipboard({ resetAfter: 1500 });
 
-  const handleCopyIp = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(siteConfig.serverDisplayAddress);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    }
-  }, []);
-
+  const handleCopyIp = () => copy(siteConfig.serverIp);
+  const copied = copyState === "copied";
+  const failed = copyState === "failed";
   const isLoading = state === "initial";
 
   return (
@@ -55,15 +47,25 @@ export function ServerConnectionBar() {
       <button
         onClick={handleCopyIp}
         className="flex items-center gap-1.5 text-[#f5f5f2] hover:text-[#3c7bd9] transition-colors cursor-pointer font-mono text-sm"
-        aria-label={`Copiar IP del servidor: ${siteConfig.serverDisplayAddress}`}
+        aria-label={`Copiar IP del servidor: ${siteConfig.serverIp}`}
       >
         <span>IP: {siteConfig.serverDisplayAddress}</span>
         {copied ? (
           <Check size={16} className="text-[#54d255]" />
+        ) : failed ? (
+          <AlertCircle size={16} className="text-[#e8b342]" />
         ) : (
           <Copy size={16} className="text-[#8a8f92]" />
         )}
       </button>
+
+      <span className="sr-only" role="status" aria-live="polite">
+        {copied
+          ? "IP copiada"
+          : failed
+            ? `No se pudo copiar. IP: ${siteConfig.serverIp}`
+            : ""}
+      </span>
 
       <span className="text-[#8a8f92] text-sm">
         Versión: {status?.version ?? "—"}
