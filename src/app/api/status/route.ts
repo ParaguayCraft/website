@@ -1,27 +1,29 @@
 import { NextResponse } from "next/server";
 import { siteConfig } from "@/config/site";
+import { normalizeProviderResponse } from "@/services/statusProviderContract";
+import {
+  cacheStatusResponse,
+  getCachedStatusResponse,
+} from "@/services/statusRouteCache";
 import type { StatusApiResponse } from "@/types/status-api";
 
-interface McSrvStatResponse {
-  online: boolean;
-  ip?: string;
-  port?: number;
-  hostname?: string;
-  debug?: { ping: boolean };
-  players?: { online: number; max: number };
-  version?: string;
-  motd?: { raw: string[] };
+function cacheAndRespond(
+  data: StatusApiResponse,
+  status: 200 | 502,
+  at: number,
+): NextResponse<StatusApiResponse> {
+  cacheStatusResponse(data, status, at);
+  return NextResponse.json(data, { status });
 }
-
-const CACHE_TTL_MS = 20_000;
-
-let cachedResponse: { data: StatusApiResponse; at: number } | null = null;
 
 export async function GET(): Promise<NextResponse<StatusApiResponse>> {
   const now = Date.now();
+  const cachedResponse = getCachedStatusResponse(now);
 
-  if (cachedResponse && now - cachedResponse.at < CACHE_TTL_MS) {
-    return NextResponse.json(cachedResponse.data);
+  if (cachedResponse) {
+    return NextResponse.json(cachedResponse.data, {
+      status: cachedResponse.status,
+    });
   }
 
   try {
@@ -32,50 +34,47 @@ export async function GET(): Promise<NextResponse<StatusApiResponse>> {
     );
 
     if (!res.ok) {
-      const failure: StatusApiResponse = {
+      return cacheAndRespond(
+        {
+          ok: false,
+          error: "provider_unavailable",
+        },
+        502,
+        now,
+      );
+    }
+
+    let providerData: unknown;
+    try {
+      providerData = await res.json();
+    } catch {
+      return cacheAndRespond(
+        {
+          ok: false,
+          error: "invalid_provider_response",
+        },
+        502,
+        now,
+      );
+    }
+
+    const response = normalizeProviderResponse(
+      providerData,
+      siteConfig.supportedVersion,
+      siteConfig.serverDisplayAddress,
+    );
+
+    return response.ok
+      ? cacheAndRespond(response, 200, now)
+      : cacheAndRespond(response, 502, now);
+  } catch {
+    return cacheAndRespond(
+      {
         ok: false,
         error: "provider_unavailable",
-      };
-      cachedResponse = { data: failure, at: now };
-      return NextResponse.json(failure, { status: 502 });
-    }
-
-    const data: McSrvStatResponse = await res.json();
-
-    // Validate response shape
-    if (typeof data.online !== "boolean") {
-      const failure: StatusApiResponse = {
-        ok: false,
-        error: "invalid_provider_response",
-      };
-      cachedResponse = { data: failure, at: now };
-      return NextResponse.json(failure, { status: 502 });
-    }
-
-    const playersMax =
-      data.players?.max && data.players.max > 0
-        ? data.players.max
-        : null;
-
-    const success: StatusApiResponse = {
-      ok: true,
-      server: {
-        online: data.online,
-        playersOnline: data.players?.online ?? 0,
-        playersMax,
-        version: data.version ?? siteConfig.supportedVersion,
-        address: data.hostname ?? siteConfig.serverDisplayAddress,
       },
-    };
-
-    cachedResponse = { data: success, at: now };
-    return NextResponse.json(success);
-  } catch {
-    const failure: StatusApiResponse = {
-      ok: false,
-      error: "provider_unavailable",
-    };
-    cachedResponse = { data: failure, at: now };
-    return NextResponse.json(failure, { status: 502 });
+      502,
+      now,
+    );
   }
 }
