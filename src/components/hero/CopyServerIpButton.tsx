@@ -2,12 +2,11 @@
 
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { MinecraftButton } from "@/components/ui/MinecraftButton";
-import { Sword, Copy, Check, AlertCircle } from "lucide-react";
+import { Sword, Check, AlertCircle } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 export function CopyServerIpButton() {
   const { state, copy } = useCopyToClipboard();
-
   const handleCopy = () => copy(siteConfig.serverIp);
 
   const labels: Record<string, string> = {

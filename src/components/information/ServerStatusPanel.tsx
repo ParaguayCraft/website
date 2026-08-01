@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { PanelWrapper } from "./PanelWrapper";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { PlayerProgressBar } from "@/components/ui/PlayerProgressBar";
-import { fetchServerStatus } from "@/services/minecraftStatus";
+import { fetchServerStatus, toLegacyStatus } from "@/services/minecraftStatus";
 import type { ServerStatus } from "@/types/server";
 import { siteConfig } from "@/config/site";
 
@@ -21,9 +21,9 @@ export function ServerStatusPanel() {
       setError(false);
 
       fetchServerStatus()
-        .then((data) => {
+        .then((response) => {
           if (!cancelled) {
-            setStatus(data);
+            setStatus(toLegacyStatus(response));
             setLoading(false);
           }
         })
@@ -74,7 +74,7 @@ export function ServerStatusPanel() {
 
           <div className="flex items-center justify-between">
             <span className="text-sm text-[#8a8f92]">IP</span>
-            <span className="text-sm text-[#f5f5f2] font-mono">{siteConfig.serverIp}</span>
+            <span className="text-sm text-[#f5f5f2] font-mono">{siteConfig.serverDisplayAddress}</span>
           </div>
         </div>
       )}

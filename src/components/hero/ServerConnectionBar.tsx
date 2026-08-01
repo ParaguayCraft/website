@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Copy, Check, AlertCircle } from "lucide-react";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
-import { fetchServerStatus } from "@/services/minecraftStatus";
+import { fetchServerStatus, toLegacyStatus } from "@/services/minecraftStatus";
 import type { ServerStatus } from "@/types/server";
 import { siteConfig } from "@/config/site";
 
@@ -16,11 +16,11 @@ export function ServerConnectionBar() {
   useEffect(() => {
     let cancelled = false;
 
-    const fetchStatus = () => {
+    const fetchData = () => {
       fetchServerStatus()
-        .then((data) => {
+        .then((response) => {
           if (!cancelled) {
-            setStatus(data);
+            setStatus(toLegacyStatus(response));
             setLoading(false);
           }
         })
@@ -31,15 +31,15 @@ export function ServerConnectionBar() {
               playersOnline: 0,
               playersMax: 0,
               version: "—",
-              address: siteConfig.serverIp,
+              address: siteConfig.serverDisplayAddress,
             });
             setLoading(false);
           }
         });
     };
 
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 30_000);
+    fetchData();
+    const interval = setInterval(fetchData, 30_000);
 
     return () => {
       cancelled = true;
@@ -48,7 +48,6 @@ export function ServerConnectionBar() {
   }, []);
 
   const handleCopyIp = () => copy(siteConfig.serverIp);
-
   const copied = copyState === "copied";
   const failed = copyState === "failed";
 
@@ -84,7 +83,7 @@ export function ServerConnectionBar() {
         className="flex items-center gap-1.5 text-[#f5f5f2] hover:text-[#3c7bd9] transition-colors cursor-pointer font-mono text-sm"
         aria-label={`Copiar IP del servidor: ${siteConfig.serverIp}`}
       >
-        <span>IP: {siteConfig.serverIp}</span>
+        <span>IP: {siteConfig.serverDisplayAddress}</span>
         {copied ? (
           <Check size={16} className="text-[#54d255]" />
         ) : failed ? (

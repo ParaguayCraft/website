@@ -1,46 +1,80 @@
 import { NextResponse } from "next/server";
 import { siteConfig } from "@/config/site";
+import { normalizeProviderResponse } from "@/services/statusProviderContract";
+import {
+  cacheStatusResponse,
+  getCachedStatusResponse,
+} from "@/services/statusRouteCache";
+import type { StatusApiResponse } from "@/types/status-api";
 
-interface McSrvStatResponse {
-  online: boolean;
-  ip?: string;
-  port?: number;
-  hostname?: string;
-  debug?: { ping: boolean };
-  players?: { online: number; max: number };
-  version?: string;
-  motd?: { raw: string[] };
+function cacheAndRespond(
+  data: StatusApiResponse,
+  status: 200 | 502,
+  at: number,
+): NextResponse<StatusApiResponse> {
+  cacheStatusResponse(data, status, at);
+  return NextResponse.json(data, { status });
 }
 
-export const dynamic = "force-dynamic";
+export async function GET(): Promise<NextResponse<StatusApiResponse>> {
+  const now = Date.now();
+  const cachedResponse = getCachedStatusResponse(now);
 
-export async function GET() {
+  if (cachedResponse) {
+    return NextResponse.json(cachedResponse.data, {
+      status: cachedResponse.status,
+    });
+  }
+
   try {
     const host = `${siteConfig.serverHost}:${siteConfig.serverQueryPort}`;
-    const res = await fetch(`https://api.mcsrvstat.us/3/${encodeURIComponent(host)}`, {
-      next: { revalidate: 0 },
-      signal: AbortSignal.timeout(5000),
-    });
+    const res = await fetch(
+      `https://api.mcsrvstat.us/3/${encodeURIComponent(host)}`,
+      { signal: AbortSignal.timeout(5000) },
+    );
 
-    if (!res.ok) throw new Error(`mcsrvstat.us returned ${res.status}`);
+    if (!res.ok) {
+      return cacheAndRespond(
+        {
+          ok: false,
+          error: "provider_unavailable",
+        },
+        502,
+        now,
+      );
+    }
 
-    const data: McSrvStatResponse = await res.json();
+    let providerData: unknown;
+    try {
+      providerData = await res.json();
+    } catch {
+      return cacheAndRespond(
+        {
+          ok: false,
+          error: "invalid_provider_response",
+        },
+        502,
+        now,
+      );
+    }
 
-    return NextResponse.json({
-      online: data.online,
-      playersOnline: data.players?.online ?? 0,
-      playersMax: data.players?.max ?? 0,
-      version: data.version ?? "—",
-      address: data.hostname ?? siteConfig.serverIp,
-      latency: data.debug?.ping ? undefined : undefined,
-    });
+    const response = normalizeProviderResponse(
+      providerData,
+      siteConfig.supportedVersion,
+      siteConfig.serverDisplayAddress,
+    );
+
+    return response.ok
+      ? cacheAndRespond(response, 200, now)
+      : cacheAndRespond(response, 502, now);
   } catch {
-    return NextResponse.json({
-      online: false,
-      playersOnline: 0,
-      playersMax: 0,
-      version: "—",
-      address: siteConfig.serverIp,
-    });
+    return cacheAndRespond(
+      {
+        ok: false,
+        error: "provider_unavailable",
+      },
+      502,
+      now,
+    );
   }
 }
